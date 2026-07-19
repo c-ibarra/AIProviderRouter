@@ -1,0 +1,13 @@
+# Local secrets / machine-specific config — never commit
+.env
+antigravity/antigravity.env
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store

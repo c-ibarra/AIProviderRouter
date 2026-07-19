@@ -1,0 +1,22 @@
+# Provider configuration for ai-provider-router.
+# This file has NO secrets — only routing/auth-mode metadata.
+
+default_provider: antigravity
+
+providers:
+  claude:
+    auth_source: local_oauth       # uses your existing `claude` CLI session
+    scope: personal_only
+    cli_command: claude            # binary invoked by the router
+
+  antigravity:
+    auth_source: local_oauth       # uses your existing Antigravity session
+    scope: personal_only
+    cli_command: antigravity       # TODO: replace with the actual Antigravity CLI binary/command
+
+routing:
+  rules:
+    - match: { task_type: coding }
+      use_provider: claude
+    - match: { task_type: general }
+      use_provider: antigravity
