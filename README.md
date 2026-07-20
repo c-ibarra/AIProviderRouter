@@ -1,4 +1,13 @@
+<img src="docs/banner.png" alt="AIProviderRouter — by c-ibarra" width="100%" />
+
 # ai-provider-router
+
+![Python](https://img.shields.io/badge/Python-3.14%2B-3776AB)
+![Framework](https://img.shields.io/badge/Framework-FastAPI-009688)
+![AI](https://img.shields.io/badge/AI-Claude%20Agent%20SDK-CC785C)
+![AI](https://img.shields.io/badge/AI-Antigravity%20CLI-4285F4)
+![Architecture](https://img.shields.io/badge/Architecture-Hexagonal-6E56CF)
+![Tests](https://img.shields.io/badge/Tests-35%20passing-2EA043)
 
 A local, config-driven router that lets a single OpenAI-compatible endpoint talk to **either Claude or Antigravity**, decided by configuration instead of hardcoded into the client. Point [Warp](https://www.warp.dev/) (or any OpenAI-compatible tool) at one endpoint; swap providers by editing a YAML file — no restart, no client-side change.
 
