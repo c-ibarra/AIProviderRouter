@@ -54,7 +54,17 @@ Archive a completed change in the experimental workflow.
 
    **If no tasks file exists:** Proceed without task-related warning.
 
-4. **Assess delta spec sync state**
+4. **Run the test suite (hard gate, not a soft warning)**
+
+   If the repo has a recognizable test command (e.g. `pytest`, a `test` script in `pyproject.toml`/`package.json`, or one documented in `CLAUDE.md`/`AGENTS.md`), run it now.
+
+   - **If tests fail:** stop. Do not proceed to archive. Report the failing tests and let the user decide whether to fix them, re-run `openspec-apply-change`, or explicitly override (require an explicit "archive anyway" confirmation via **AskUserQuestion** — this is the one case where proceeding needs an explicit override, not just an FYI).
+   - **If tests pass:** proceed silently to the next step.
+   - **If no test command/framework exists yet in the repo:** proceed without blocking — there's nothing to run. Don't fabricate a test command.
+
+   This is distinct from the task-checkbox check above: unchecked tasks are a soft warning (the user might legitimately archive partial work), but failing tests on code that claims to be done are a hard stop by default.
+
+5. **Assess delta spec sync state**
 
    Use `artifactPaths.specs.existingOutputPaths` from status JSON to check for delta specs. If none exist, proceed without sync prompt.
 
@@ -69,7 +79,7 @@ Archive a completed change in the experimental workflow.
 
    If user chooses sync, use Task tool (subagent_type: "general-purpose", prompt: "Use Skill tool to invoke openspec-sync-specs for change '<name>'. Delta spec analysis: <include the analyzed delta spec summary>"). Proceed to archive regardless of choice.
 
-5. **Perform the archive**
+6. **Perform the archive**
 
    Create an `archive` directory under `planningHome.changesDir` if it doesn't exist:
    ```bash
@@ -86,7 +96,7 @@ Archive a completed change in the experimental workflow.
    mv "<changeRoot>" "<planningHome.changesDir>/archive/YYYY-MM-DD-<name>"
    ```
 
-6. **Display summary**
+7. **Display summary**
 
    Show archive completion summary including:
    - Change name
@@ -111,7 +121,8 @@ All artifacts complete. All tasks complete.
 **Guardrails**
 - Always prompt for change selection if not provided
 - Use artifact graph (openspec status --json) for completion checking
-- Don't block archive on warnings - just inform and confirm
+- Don't block archive on soft warnings (incomplete artifacts/tasks) - just inform and confirm
+- **Do** block archive on a failing test suite - that's a hard gate, only bypassed by an explicit "archive anyway" confirmation
 - Preserve .openspec.yaml when moving to archive (it moves with the directory)
 - Show clear summary of what happened
 - If sync is requested, use openspec-sync-specs approach (agent-driven)

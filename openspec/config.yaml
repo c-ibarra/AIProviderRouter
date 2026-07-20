@@ -3,18 +3,30 @@ schema: spec-driven
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Full narrative spec: openspec/PROJECT_SPEC.md — read it before proposing anything.
+  Architecture decisions (read all before designing): docs/adr/0001-antigravity-cli-over-sdk.md,
+  docs/adr/0002-hexagonal-architecture.md, docs/adr/0003-stateless-chat-only-scope.md.
+  Primary-source research on Antigravity's agy CLI: docs/research/antigravity-headless-invocation.md.
+  Live config schema: config/provider.yaml.
+
+  Tech stack: Python, FastAPI, claude-agent-sdk (Claude), agy CLI subprocess (Antigravity).
+  Architecture: hexagonal (ports & adapters) — a ProviderPort interface with a ClaudeAdapter
+  and an AntigravityAdapter, plus an HTTP driving adapter (FastAPI) exposing an
+  OpenAI-compatible /v1/chat/completions endpoint bound to 127.0.0.1 only.
+  Scope for v1: stateless (no session store, full message history forwarded every request)
+  and tool-free (no file/command tools on either provider leg — pure chat, no agentic
+  side effects). Routing is 100% config-driven via provider.yaml's default_provider,
+  re-read on every request; there is no per-message routing rule matching.
+  Claude leg streams real SSE; Antigravity leg returns one simulated chunk.
+  Antigravity leg retries once (configurable) on the known agy -p "empty stdout" bug
+  before returning an explicit error.
+  All committed material (code, docs, comments, commit messages) must be in English.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  design:
+    - Must be consistent with docs/adr/0001, 0002, and 0003 — flag explicitly if a design choice would contradict one of them, don't silently diverge.
+  tasks:
+    - Every task with a testable seam follows the tdd skill (failing test first, minimal implementation, full suite green) per openspec-apply-change's guardrails.

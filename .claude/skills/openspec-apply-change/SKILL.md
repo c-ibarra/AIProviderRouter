@@ -70,12 +70,17 @@ Implement tasks from an OpenSpec change.
 
 6. **Implement tasks (loop until done or blocked)**
 
-   For each pending task:
+   For each pending task, follow the **`tdd` skill's red→green loop**:
    - Show which task is being worked on
-   - Make the code changes required
-   - Keep changes minimal and focused
-   - Mark task complete in the tasks file: `- [ ]` → `- [x]`
+   - Identify the seam(s) under test for this task and confirm them if not already agreed
+   - Write a failing test at that seam first (red) — no implementation yet
+   - Make the minimal code change required to pass that test (green)
+   - Run the project's test suite (not just the new test) and confirm it passes before moving on
+   - Keep changes minimal and focused — one seam, one test, one implementation per cycle
+   - Mark task complete in the tasks file: `- [ ]` → `- [x]` only once its tests pass
    - Continue to next task
+
+   If a task has no meaningful seam to test (e.g. pure config/docs changes), skip the test-first step for that task only and say so explicitly — don't force a test where there's no behavior to verify.
 
    **Pause if:**
    - Task is unclear → ask for clarification
@@ -148,6 +153,8 @@ What would you like to do?
 - If task is ambiguous, pause and ask before implementing
 - If implementation reveals issues, pause and suggest artifact updates
 - Keep code changes minimal and scoped to each task
+- Follow the `tdd` skill for every task with a testable seam: failing test before implementation, minimal code to pass it, full test suite green before checking the task off
+- Never mark a task `- [x]` while its tests are red or unrun
 - Update task checkbox immediately after completing each task
 - Pause on errors, blockers, or unclear requirements - don't guess
 - Use contextFiles from CLI output, don't assume specific file names

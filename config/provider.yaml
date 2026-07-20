@@ -1,5 +1,6 @@
 # Provider configuration for ai-provider-router.
 # This file has NO secrets — only routing/auth-mode metadata.
+# Read fresh on every request — edit and save, no restart needed.
 
 default_provider: antigravity
 
@@ -8,15 +9,22 @@ providers:
     auth_source: local_oauth       # uses your existing `claude` CLI session
     scope: personal_only
     cli_command: claude            # binary invoked by the router
+    model: claude-sonnet-5         # passed as --model
+    effort: medium                 # passed as --effort (low|medium|high|xhigh|max)
 
   antigravity:
-    auth_source: local_oauth       # uses your existing Antigravity session
+    auth_source: local_oauth       # uses your existing `agy login` session
     scope: personal_only
-    cli_command: antigravity       # TODO: replace with the actual Antigravity CLI binary/command
+    cli_command: agy               # binary invoked by the router
+    model: gemini-3-pro            # passed as --model
+    # No --effort equivalent: agy selects reasoning/thinking level via the
+    # model variant itself (e.g. a "-thinking" model name), not a separate flag.
+    retry:
+      max_attempts: 2              # 1 automatic retry after the first attempt
+      on_empty_output: true        # treat "exit 0, empty stdout" as a failure, not success
 
-routing:
-  rules:
-    - match: { task_type: coding }
-      use_provider: claude
-    - match: { task_type: general }
-      use_provider: antigravity
+# Routing is 100% config-driven: whichever provider is set above as
+# default_provider handles every request. There is no per-message routing —
+# OpenAI's chat-completions request shape (what Warp sends) has no field to
+# carry a "task type" signal, so per-task routing rules would be dead code.
+# To switch providers, edit default_provider above and save.
