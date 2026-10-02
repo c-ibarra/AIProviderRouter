@@ -14,3 +14,10 @@ venv/
 
 # IDE
 .idea/
+
+# Local development tooling (not part of the project)
+.claude/
+.agent/
+docs/agents/
+CLAUDE.md
+skills-lock.json
